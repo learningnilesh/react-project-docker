@@ -1,10 +1,10 @@
 #### Step 1
 
 # Use an existing docker image as base
-FROM node:alpine as builder
+FROM node:alpine AS builder
 
 # Specify WORKDIR
-WORKDIR '/app'
+WORKDIR '/deploy'
 
 # Copy the package.json from your work directory to the container's work directory
 # Until we copy the package.json file to container work directory, npm install will not work
@@ -17,6 +17,8 @@ RUN npm install
 COPY . .
 
 # Startup Command
+#CMD ["npm", "run", "start"]
+
 RUN npm run build
 
 #### Step 2
@@ -25,4 +27,4 @@ RUN npm run build
 # Fetch nginx image from docker hub
 FROM nginx
 EXPOSE 80
-COPY --from=builder /app/build /usr/share/nginx/html
+COPY --from=0 '/deploy/build' '/usr/share/nginx/html'
